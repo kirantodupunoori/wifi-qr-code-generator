@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+	<head>
+		<title>WiFi QR code generator</title>
+
+		<script src="jquery.js"></script>
+
+		<script src="qr.js"></script>
+
+		<script>
+			// https://jeromeetienne.github.io/jquery-qrcode/
+			// https://code.google.com/p/zxing/wiki/BarcodeContents
+
+			// H:true vs B:true for hidden networks:
+			// https://code.google.com/p/zxing/issues/detail?id=1218
+			// https://code.google.com/p/zxing/issues/detail?id=1455
+
+
+		function escape_string (string) {
+            var to_escape = ['\\', ';', ',', ':', '"'];
+            var hex_only = /^[0-9a-f]+$/i;
+            var output = "";
+            for (var i=0; i<string.length; i++) {
+                if($.inArray(string[i], to_escape) != -1) {
+                    output += '\\'+string[i];
+                }
+                else {
+                    output += string[i];
+                }
+            }
+            //if (hex_only.test(output)) {
+            //    output = '"'+output+'"';
+            //}
+            return output;
+        };
+
+			function generateQR() {
+				var type = "WPA";
+				var ssid = $(".js-ssid").val();
+				var key = $(".js-pwd").val();
+                var qrstring = 'WIFI:S:'+escape_string(ssid) + ';T:' + type +';P:' + escape_string(key) + ';';
+				var url = "WIFI:" +
+					"T:" + type + ";" +
+					"S:" + ssid + ";" +
+					"P:" + key + ";" +
+                    ";";
+                $(".js-qr").html('');
+                $(".js-qr").qrcode(qrstring);
+			}
+		</script>
+	</head>
+	<body>
+        <div class="wrapper" style="text-align: center;">
+            <div>
+                <label>SSID</label>
+                <input type="text" class="js-ssid" placeholder="Enter SSID">
+            </div>
+            <div>
+                <label>Passowrd (if any)</label>
+                <input type="password" class="js-pwd" placeholder="Enter password">
+            </div>
+            <button class="js-generate" onclick="generateQR()">Generate QR</button>
+            <br><br>
+            <div class="js-qr"></div>
+        </div>
+	</body>
+</html>
